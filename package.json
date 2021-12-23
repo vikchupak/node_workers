@@ -1,0 +1,13 @@
+{
+  "name": "node_multithreading",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node main.js"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "workerpool": "^6.1.5"
+  }
+}
