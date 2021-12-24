@@ -31,3 +31,13 @@ https://www.nearform.com/blog/learning-to-swim-with-piscina-the-node-js-worker-p
 https://amagiacademy.com/blog/posts/2021-04-09/node-worker-threads-pool
 
 https://www.youtube.com/watch?v=zLm8pnbxSII&list=PLHhi8ymDMrQZmXEqIIlq2S9-Ibh9b_-rQ&index=31
+
+// 6-th minute about обмін даними = сереалізація спочатку
+
+https://www.youtube.com/watch?v=zLm8pnbxSII&list=PLHhi8ymDMrQZmXEqIIlq2S9-Ibh9b_-rQ&index=31
+
+https://www.hongkiat.com/blog/shared-memory-in-javascript/
+
+https://exploringjs.com/es2016-es2017/ch_shared-array-buffer.html
+
+https://learn.javascript.ru/arraybuffer-binary-arrays

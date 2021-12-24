@@ -1,35 +1,64 @@
-const os = require("os");
-const workerpool = require("workerpool");
-const { quickSort } = require("./utils/quickSort");
+const path = require("path");
+const { Worker, threadId } = require("worker_threads");
 const { getRandomIntInclusive } = require("./utils/getRandomIntInclusive");
+const { quickSort } = require("./utils/quickSort");
 
-const logicalCpus = os.cpus().length;
-
-console.log("logicalCpus: ", logicalCpus);
-
-const array = Array(1000_000)
+const array = Array(1_000_000)
   .fill()
   .map(() => getRandomIntInclusive(0, 10_000_000));
 
 console.log("array: ", array);
 
-console.time("quickSort only");
-console.log("sorted array: ", quickSort([...array]));
-console.timeEnd("quickSort only");
+function runQuickSortWorker(workerData) {
+  return new Promise((resolve, reject) => {
+    const quickSortWorker = new Worker(
+      path.join(__dirname, "./workers/quickSortWorker.js"),
+      { workerData }
+    );
 
-const pool = workerpool.pool({
-  minWorkers: "max",
-  maxWorkers: logicalCpus - 1,
-  workerType: "thread",
-});
+    quickSortWorker.on("message", resolve);
+    quickSortWorker.on("error", reject);
+    quickSortWorker.on("exit", (code) => {
+      if (code !== 0)
+        reject(new Error(`Worker stopped with exit code ${code}`));
+    });
+  });
+}
 
-const intervalId = setInterval(() => console.log(pool.stats()), 100);
+async function threadedQuickSort(array) {
+  if (array.length < 2) {
+    return array;
+  }
+  const pivot = array[0];
+  const less = [];
+  const greater = [];
 
-console.time("quickSort with worker pool");
-pool
-  .exec(quickSort, [[...array]])
-  .then((result) => console.log("sorted array with worker pool: ", result))
-  .catch((error) => console.error(error))
-  .then(() => console.timeEnd("quickSort with worker pool"))
-  .then(() => clearInterval(intervalId))
-  .then(() => pool.terminate());
+  for (let i = 1; i < array.length; i++) {
+    if (pivot > array[i]) {
+      less.push(array[i]);
+    } else {
+      greater.push(array[i]);
+    }
+  }
+
+  const sortedPartitions = await Promise.all([
+    runQuickSortWorker(less),
+    runQuickSortWorker(greater),
+  ]);
+
+  return sortedPartitions[0].concat(pivot, sortedPartitions[1]);
+}
+
+console.log("mainThreadId: ", threadId);
+
+console.time("quickSort");
+console.log("Sorted array: ", quickSort([...array]));
+console.timeEnd("quickSort");
+
+async function runThreadedQuickSort() {
+  console.time("threadedQuickSort");
+  console.log("Sorted threaded array: ", await threadedQuickSort([...array]));
+  console.timeEnd("threadedQuickSort");
+}
+
+runThreadedQuickSort().catch((error) => console.error(error));
