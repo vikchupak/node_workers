@@ -19,3 +19,15 @@ https://habr.com/ru/company/otus/blog/563920/
 // Search for worker pool here as well
 
 https://nodejs.org/api/worker_threads.html
+
+https://makolyte.com/multithreaded-quicksort-in-csharp/
+
+https://www.geeksforgeeks.org/quick-sort-using-multi-threading/
+
+https://easylang.online/blog/sort_par.html
+
+https://www.nearform.com/blog/learning-to-swim-with-piscina-the-node-js-worker-pool/
+
+https://amagiacademy.com/blog/posts/2021-04-09/node-worker-threads-pool
+
+https://www.youtube.com/watch?v=zLm8pnbxSII&list=PLHhi8ymDMrQZmXEqIIlq2S9-Ibh9b_-rQ&index=31
