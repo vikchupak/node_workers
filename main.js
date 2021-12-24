@@ -17,7 +17,13 @@ console.time("quickSort only");
 console.log("sorted array: ", quickSort([...array]));
 console.timeEnd("quickSort only");
 
-const pool = workerpool.pool({ maxWorkers: 7, workerType: "thread" });
+const pool = workerpool.pool({
+  minWorkers: "max",
+  maxWorkers: logicalCpus - 1,
+  workerType: "thread",
+});
+
+const intervalId = setInterval(() => console.log(pool.stats()), 100);
 
 console.time("quickSort with worker pool");
 pool
@@ -25,4 +31,5 @@ pool
   .then((result) => console.log("sorted array with worker pool: ", result))
   .catch((error) => console.error(error))
   .then(() => console.timeEnd("quickSort with worker pool"))
+  .then(() => clearInterval(intervalId))
   .then(() => pool.terminate());
