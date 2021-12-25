@@ -31,12 +31,6 @@ function runQuickSortWorker(workerData) {
   });
 }
 
-function fillInSharedArrayView(view, viewLength) {
-  for (let i = 0; i <= viewLength; i++) {
-    view[i];
-  }
-}
-
 async function threadedQuickSort(array) {
   if (array.length < 2) {
     return array;
