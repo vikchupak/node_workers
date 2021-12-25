@@ -3,11 +3,17 @@ const { Worker, threadId } = require("worker_threads");
 const { getRandomIntInclusive } = require("./utils/getRandomIntInclusive");
 const { quickSort } = require("./utils/quickSort");
 
-const array = Array(1_000_000)
+const n = 100_000;
+
+const array = Array(n)
   .fill()
-  .map(() => getRandomIntInclusive(0, 10_000_000));
+  .map(() => getRandomIntInclusive(0, 1000_000));
 
 console.log("array: ", array);
+
+// Buffer creation // After buffer is created pass it in workerData
+// const buffer = new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * n);
+// const view = new Int32Array(buffer);
 
 function runQuickSortWorker(workerData) {
   return new Promise((resolve, reject) => {
@@ -23,6 +29,12 @@ function runQuickSortWorker(workerData) {
         reject(new Error(`Worker stopped with exit code ${code}`));
     });
   });
+}
+
+function fillInSharedArrayView(view, viewLength) {
+  for (let i = 0; i <= viewLength; i++) {
+    view[i];
+  }
 }
 
 async function threadedQuickSort(array) {
