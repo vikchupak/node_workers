@@ -24,9 +24,7 @@ app.get("/fibonacci", (req, res) => {
   pool
     .proxy()
     .then((worker) => worker.getNthFibonacciNumber(parseInt(n)))
-    .then((result) => {
-      res.json(result);
-    })
+    .then((result) => res.json(result))
     .catch(console.error);
   // .then(() => pool.terminate());
 });
