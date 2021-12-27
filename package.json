@@ -10,7 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.2",
-    "nodemon": "^2.0.15",
-    "workerpool": "^6.1.5"
+    "nodemon": "^2.0.15"
   }
 }
