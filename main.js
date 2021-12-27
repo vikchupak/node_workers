@@ -49,7 +49,7 @@ async function threadedQuickSort(array) {
   return sortedPartitions[0].concat(pivot, sortedPartitions[1]);
 }
 
-console.log("mainThreadId: ", threadId);
+console.log(`mainThreadId: ${threadId}. Process pid: ${process.pid}`);
 
 console.time("quickSort");
 console.log("Sorted array: ", quickSort([...array]));
