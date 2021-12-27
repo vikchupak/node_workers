@@ -1,64 +1,38 @@
+const os = require("os");
 const path = require("path");
-const { Worker, threadId } = require("worker_threads");
-const { getRandomIntInclusive } = require("./utils/getRandomIntInclusive");
-const { quickSort } = require("./utils/quickSort");
+const workerpool = require("workerpool");
+const express = require("express");
 
-const array = Array(1_000_000)
-  .fill()
-  .map(() => getRandomIntInclusive(0, 10_000_000));
+const logicalCpus = os.cpus().length;
 
-console.log("array: ", array);
-
-function runQuickSortWorker(workerData) {
-  return new Promise((resolve, reject) => {
-    const quickSortWorker = new Worker(
-      path.join(__dirname, "./workers/quickSortWorker.js"),
-      { workerData }
-    );
-
-    quickSortWorker.on("message", resolve);
-    quickSortWorker.on("error", reject);
-    quickSortWorker.on("exit", (code) => {
-      if (code !== 0)
-        reject(new Error(`Worker stopped with exit code ${code}`));
-    });
-  });
-}
-
-async function threadedQuickSort(array) {
-  if (array.length < 2) {
-    return array;
+const pool = workerpool.pool(
+  path.join(__dirname, "./workers/nthFibonacciNumberWorker.js"),
+  {
+    minWorkers: "max",
+    maxWorkers: logicalCpus - 1,
+    workerType: "thread",
   }
-  const pivot = array[0];
-  const less = [];
-  const greater = [];
+);
 
-  for (let i = 1; i < array.length; i++) {
-    if (pivot > array[i]) {
-      less.push(array[i]);
-    } else {
-      greater.push(array[i]);
-    }
-  }
+setInterval(() => console.log(pool.stats()), 500);
 
-  const sortedPartitions = await Promise.all([
-    runQuickSortWorker(less),
-    runQuickSortWorker(greater),
-  ]);
+const app = express();
 
-  return sortedPartitions[0].concat(pivot, sortedPartitions[1]);
-}
+app.get("/fibonacci", (req, res) => {
+  const { n } = req.query; // object
 
-console.log(`mainThreadId: ${threadId}. Process pid: ${process.pid}`);
+  pool
+    .proxy()
+    .then((worker) => worker.getNthFibonacciNumber(parseInt(n)))
+    .then((result) => {
+      res.json(result);
+    })
+    .catch(console.error);
+  // .then(() => pool.terminate());
+});
 
-console.time("quickSort");
-console.log("Sorted array: ", quickSort([...array]));
-console.timeEnd("quickSort");
+const PORT = 8000;
 
-async function runThreadedQuickSort() {
-  console.time("threadedQuickSort");
-  console.log("Sorted threaded array: ", await threadedQuickSort([...array]));
-  console.timeEnd("threadedQuickSort");
-}
-
-runThreadedQuickSort().catch((error) => console.error(error));
+app.listen(PORT, () => {
+  console.log(`App listening at http://localhost:${PORT}`);
+});
