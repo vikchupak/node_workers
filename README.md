@@ -1,3 +1,5 @@
+A **Node Worker** refers to the use of threads for parallel computation. While Node.js is traditionally single-threaded, it provides the **worker_threads** module that allows you to offload heavy tasks to separate threads, **much like Web Workers in the browser**.
+
 https://developer.mozilla.org/en-US/docs/Web/API/Navigator/hardwareConcurrency
 
 https://stackoverflow.com/questions/26049013/node-js-get-number-of-processors-available/37871843
